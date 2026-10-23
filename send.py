@@ -138,8 +138,9 @@ def main():
     elif os.environ.get("SMTP_USER", "").strip():
         send_smtp(title, body)
     else:
-        print("没有配置 SMTP_USER 或 WECOM_KEY，跳过发送。")
-        return 1
+        # 还没配置凭据：安静退出，避免每天报一次失败
+        print("未配置 SMTP_USER / WECOM_KEY，本次跳过（不算失败）。")
+        return 0
     return 0
 
 
