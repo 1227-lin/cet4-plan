@@ -1,0 +1,28 @@
+name: 四级每日提醒
+
+on:
+  schedule:
+    # GitHub 用 UTC。11:30 UTC = 北京时间 19:30
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+    inputs:
+      force_date:
+        description: '手动测试：按这个日期生成（YYYY-MM-DD，留空=今天）'
+        required: false
+        default: ''
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 发送今日提醒
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_AUTH: ${{ secrets.SMTP_AUTH }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          WECOM_KEY: ${{ secrets.WECOM_KEY }}
+          FORCE_DATE: ${{ inputs.force_date }}
+        run: python3 send.py
